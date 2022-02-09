@@ -1,31 +1,15 @@
+# Imported libraries
 from pynput.keyboard import Key, Controller, Listener
-from time import sleep, time
-from threading import Thread
-from datetime import datetime
+from threading       import Thread
+from datetime        import datetime
+from time            import sleep, time
+from random          import uniform
+
+# Local libraries
+from mine_config     import control_keys, flags, cmd_text, \
+                            macro_sleep, key_sleep
 
 start = datetime.now()
-
-control_keys = {
-    'toggle': Key.f9,
-    'exit': Key.f10
-}
-
-flags = {
-    'running': False, 
-    'exit': False,
-    'first_run': True
-}
-
-cmd_text = {
-    'instructions': "Input delay between mining (in seconds): ",
-    'tutorial_1':   "--- Type {} to  start/stop mining ---".format(control_keys['toggle']),
-    'tutorial_2':   "---- Type {} to  end the script ----".format(control_keys['exit']),
-    'breaker':      "=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=",
-    'started':      "------------- Macro started -------------",
-    'paused':       "------------- Macro  paused -------------",
-    'terminated':   "---------- Program  terminated ----------",
-    'warning':      "=~=~=~=~ Watch out for monsters! ~=~=~=~="
-}
 
 
 def on_press(key):
@@ -45,20 +29,20 @@ def on_press(key):
 def macro(flags):
     keyboard = Controller()
     while not flags['exit']:
-        if check_exit(mine_time + 0.01, flags): return
+        if check_exit(mine_time + uniform(macro_sleep[0], macro_sleep[1]), flags): return
         if flags['running']:
-            press(keyboard, 'm')
-            press(keyboard, '!')
-            press(keyboard, 'm')
-            press(keyboard, Key.enter)
+            press_key(keyboard, 'm')
+            press_key(keyboard, '!')
+            press_key(keyboard, 'm')
+            press_key(keyboard, Key.enter)
             print_mine()
 
 
-def press(keyboard, key):
+def press_key(keyboard, key):
     keyboard.press(key)
-    sleep(0.01)
+    sleep(uniform(key_sleep[0], key_sleep[1]))
     keyboard.release(key)
-    sleep(0.01)
+    sleep(uniform(key_sleep[0], key_sleep[1]))
 
 
 def check_exit(s, flags):
