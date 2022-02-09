@@ -12,6 +12,13 @@ from mine_config     import control_keys, flags, cmd_text, \
 start = datetime.now()
 
 
+def monster_event():
+    pass
+
+
+def repair_event():
+    pass
+
 def on_press(key):
     if key == control_keys['toggle']:
         flags['running'] = not flags['running']
