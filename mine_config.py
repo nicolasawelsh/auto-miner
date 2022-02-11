@@ -17,7 +17,9 @@ control_keys = {
 flags = {
     'running'  : False, 
     'exit'     : False,
-    'first_run': True
+    'first_run': True,
+    'monster'  : False,
+    'repair'   : False
 }
 
 cmd_text = {

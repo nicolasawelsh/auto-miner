@@ -8,16 +8,8 @@ from random          import uniform
 # Local libraries
 from mine_config     import control_keys, flags, cmd_text, \
                             macro_sleep, key_sleep
+from discord_bot     import monster, repair
 
-start = datetime.now()
-
-
-def monster_event():
-    pass
-
-
-def repair_event():
-    pass
 
 def on_press(key):
     if key == control_keys['toggle']:
@@ -33,23 +25,41 @@ def on_press(key):
         return False
 
 
-def macro(flags):
+def mine_macro(flags):
     keyboard = Controller()
     while not flags['exit']:
-        if check_exit(mine_time + uniform(macro_sleep[0], macro_sleep[1]), flags): return
+        if check_exit(mine_time + rand_sleep(macro_sleep, do_sleep=False), flags): return
+        flags['monster'] = monster
         if flags['running']:
-            press_key(keyboard, 'm')
-            press_key(keyboard, '!')
-            press_key(keyboard, 'm')
+            press_keys(keyboard, 'm!m')
             press_key(keyboard, Key.enter)
-            print_mine()
+            print_text('mine')
+
+
+def repair_macro(flags):
+    keyboard = Controller()
+    while not flags['exit']:
+        if check_exit(0, flags): return
+        flags['repair'] = repair
+        if flags['repair'] and flags['running']:
+            press_keys(keyboard, 'm!repair')
+            press_key(keyboard, Key.enter)
+            print_text('repair')
 
 
 def press_key(keyboard, key):
     keyboard.press(key)
-    sleep(uniform(key_sleep[0], key_sleep[1]))
+    rand_sleep(key_sleep)
     keyboard.release(key)
-    sleep(uniform(key_sleep[0], key_sleep[1]))
+    rand_sleep(key_sleep)
+
+
+def press_keys(keyboard, key_str):
+    for key in key_str:
+        keyboard.press(key)
+        rand_sleep(key_sleep)
+        keyboard.release(key)
+        rand_sleep(key_sleep)
 
 
 def check_exit(s, flags):
@@ -60,13 +70,20 @@ def check_exit(s, flags):
     return False
 
 
-def print_mine():
-    print("\u26cf", end="  ")
-    print(datetime.now().time())
+def rand_sleep(range_arr, do_sleep=True):
+    sleep_time = uniform(range_arr[0], range_arr[-1])
+    if do_sleep:
+        sleep(sleep_time)
+    return sleep_time
 
 
 def print_text(argument):
-    if argument == 'instructions':
+    if argument == 'mine':
+        print("\u26cf", end="  ")
+        print(datetime.now().time())
+    elif argument == 'repair':
+        print("Pickaxe repaired!")
+    elif argument == 'instructions':
         return float(input(cmd_text['instructions']))
     elif argument == 'tutorial':
         print()
@@ -95,10 +112,14 @@ if __name__ == "__main__":
     mine_time = print_text('instructions')
     print_text('tutorial')
 
-    macro_thread = Thread(target=macro, args=(flags,))
-    macro_thread.start()
+    mine_thread = Thread(target=mine_macro, args=(flags,))
+    mine_thread.start()
+
+    repair_thread = Thread(target=repair_macro, args=(flags,))
+    repair_thread.start()
 
     with Listener(on_press=on_press) as listener:
         listener.join()
         
-    macro_thread.join()
+    mine_thread.join()
+    repair_thread.join()
