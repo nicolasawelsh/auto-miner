@@ -2,11 +2,13 @@
 import os
 import discord
 from dotenv import load_dotenv
-from re     import match
+import re
 
 
 monster = False
 repair  = False
+
+repair_pattern = re.compile(r'repair')
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
@@ -36,6 +38,7 @@ async def on_message(message):
         # Checks if message has embedded url to image
         if message.embeds[0].image.url:
             # MONSTER FOUND
+            print("MOSNTER FOUND")
             monster = True
         else:
             try:
@@ -44,8 +47,9 @@ async def on_message(message):
                 print(e)
             finally:
                 print(contents)
-            if match("repair", contents):
+            if repair_pattern.search(contents):
                 # REPAIR FOUND
+                print("REPAIR FOUND")
                 repair = True
 
 
