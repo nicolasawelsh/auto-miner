@@ -5,10 +5,9 @@ from dotenv import load_dotenv
 import re
 
 
-monster = False
-repair  = False
-
 repair_pattern = re.compile(r'repair')
+detection_file = "detection.txt"
+
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
@@ -28,18 +27,14 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
-    global monster
-    global repair
-
-    monster = False
-    repair  = False
-
     if hasattr(message, "embeds") and message.embeds:
         # Checks if message has embedded url to image
         if message.embeds[0].image.url:
             # MONSTER FOUND
             print("MOSNTER FOUND")
-            monster = True
+            with open(detection_file, 'w') as fp:
+                fp.write("monster")
+
         else:
             try:
                 contents = (message.embeds[0].to_dict()["fields"][-1]["value"])
@@ -50,7 +45,9 @@ async def on_message(message):
             if repair_pattern.search(contents):
                 # REPAIR FOUND
                 print("REPAIR FOUND")
-                repair = True
+                with open(detection_file, 'w') as fp:
+                    fp.write("repair")
+
 
 
 if __name__ == "__main__":

@@ -4,11 +4,12 @@ from threading       import Thread
 from datetime        import datetime
 from time            import sleep, time
 from random          import uniform
+from os.path import exists
 
 # Local libraries
 from mine_config     import control_keys, flags, cmd_text, \
                             macro_sleep, key_sleep
-from discord_bot     import monster, repair
+from discord_bot     import detection_file
 
 
 def on_press(key):
@@ -29,7 +30,11 @@ def mine_macro(flags):
     keyboard = Controller()
     while not flags['exit']:
         if check_exit(mine_time + rand_sleep(macro_sleep, do_sleep=False), flags): return
-        flags['monster'] = monster
+        if exists(detection_file):
+            with open(detection_file, 'r+') as fp:
+                if 'monster' in fp.read():
+                    flags['monster'] = True
+                    fp.truncate(0)
         if flags['running']:
             press_keys(keyboard, 'm!m')
             press_key(keyboard, Key.enter)
@@ -40,10 +45,15 @@ def repair_macro(flags):
     keyboard = Controller()
     while not flags['exit']:
         if check_exit(0, flags): return
-        flags['repair'] = repair
+        if exists(detection_file):
+            with open(detection_file, 'r+') as fp:
+                if 'repair' in fp.read():
+                    flags['repair'] = True
+                    fp.truncate(0)
         if flags['repair'] and flags['running']:
             press_keys(keyboard, 'm!repair')
             press_key(keyboard, Key.enter)
+            flags['repair'] = False
             print_text('repair')
 
 
