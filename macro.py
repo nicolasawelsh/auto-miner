@@ -14,47 +14,47 @@ from discord_bot     import detection_file
 
 def on_press(key):
     if key == control_keys['toggle']:
-        flags['running'] = not flags['running']
-        if flags['running']:
-            print_text('started')
-            flags['first_run'] = False
-        else:
-            print_text('paused')
+        toggle()
     elif key == control_keys['exit']:
         flags['exit'] = True
         print_text('terminated')
         return False
 
 
+def toggle(pause=False):
+    if pause:
+        flags['running'] = False
+        print_text('paused')
+    else:
+        flags['running'] = not flags['running']
+        if flags['running']:
+            print_text('started')
+            flags['first_run'] = False
+        else:
+            print_text('paused')
+
 def mine_macro(flags):
     keyboard = Controller()
     while not flags['exit']:
         if check_exit(mine_time + rand_sleep(macro_sleep, do_sleep=False), flags): return
-        if exists(detection_file):
-            with open(detection_file, 'r+') as fp:
-                if 'monster' in fp.read():
-                    flags['monster'] = True
-                    fp.truncate(0)
         if flags['running']:
+            if exists(detection_file):
+                with open(detection_file, 'r+') as fp:
+                    detection_contents = fp.read()
+                    if 'monster' in detection_contents:
+                        fp.truncate(0)
+                        toggle(pause=True)
+                        print_text('monster')
+                        continue
+                    elif 'repair' in detection_contents:
+                        fp.truncate(0)
+                        press_keys(keyboard, 'm!repair')
+                        press_key(keyboard, Key.enter)
+                        print_text('repair')
+                        continue
             press_keys(keyboard, 'm!m')
             press_key(keyboard, Key.enter)
             print_text('mine')
-
-
-def repair_macro(flags):
-    keyboard = Controller()
-    while not flags['exit']:
-        if check_exit(0, flags): return
-        if exists(detection_file):
-            with open(detection_file, 'r+') as fp:
-                if 'repair' in fp.read():
-                    flags['repair'] = True
-                    fp.truncate(0)
-        if flags['repair'] and flags['running']:
-            press_keys(keyboard, 'm!repair')
-            press_key(keyboard, Key.enter)
-            flags['repair'] = False
-            print_text('repair')
 
 
 def press_key(keyboard, key):
@@ -93,6 +93,8 @@ def print_text(argument):
         print(datetime.now().time())
     elif argument == 'repair':
         print("Pickaxe repaired!")
+    elif argument == 'monster':
+        print("Kill the monster!")
     elif argument == 'instructions':
         return float(input(cmd_text['instructions']))
     elif argument == 'tutorial':
@@ -125,11 +127,11 @@ if __name__ == "__main__":
     mine_thread = Thread(target=mine_macro, args=(flags,))
     mine_thread.start()
 
-    repair_thread = Thread(target=repair_macro, args=(flags,))
-    repair_thread.start()
+    #repair_thread = Thread(target=repair_macro, args=(flags,))
+    #repair_thread.start()
 
     with Listener(on_press=on_press) as listener:
         listener.join()
         
     mine_thread.join()
-    repair_thread.join()
+    #repair_thread.join()
