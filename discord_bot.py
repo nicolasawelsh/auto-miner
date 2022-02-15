@@ -6,6 +6,7 @@ import re
 
 
 repair_pattern = re.compile(r'repair')
+teleport_pattern = re.compile(r'\.gif$')
 detection_file = "detection.txt"
 
 
@@ -30,10 +31,12 @@ async def on_message(message):
     if hasattr(message, "embeds") and message.embeds:
         # Checks if message has embedded url to image
         if message.embeds[0].image.url:
-            # MONSTER FOUND
-            print("MOSNTER FOUND")
-            with open(detection_file, 'w') as fp:
-                fp.write("monster")
+            print(message.embeds[0].image.url)
+            if not teleport_pattern.search(message.embeds[0].image.url):
+                # MONSTER FOUND
+                print("MONSTER FOUND")
+                with open(detection_file, 'w') as fp:
+                    fp.write("monster")
 
         else:
             try:
