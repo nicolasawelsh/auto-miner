@@ -29,24 +29,37 @@ async def on_ready():
 @client.event
 async def on_message(message):
     if hasattr(message, "embeds") and message.embeds:
-        # Checks if message has embedded url to image
-        if message.embeds[0].image.url:
-            print(message.embeds[0].image.url)
-            if not teleport_pattern.search(message.embeds[0].image.url):
-                # MONSTER FOUND
+        # Extract URL from message
+        try:
+            # Hard-coded data structure
+            contents_url = message.embeds[0].image.url
+            if not contents_url: contents_url = False
+        except Exception as e:
+            contents_url = False
+        finally:
+            print(f"{contents_url=}")
+
+        # Extract text from message
+        try:
+            # Hard-coded data structure
+            contents_text = message.embeds[0].to_dict()["fields"][-1]["value"]
+            if not contents_text: contents_text = False
+        except Exception as e:
+            contents_text = False
+        finally:
+            print(f"{contents_text=}")
+            print(message.embeds[0].to_dict()["fields"])
+
+        print()
+
+        if contents_url:
+            if not teleport_pattern.search(contents_url):
                 print("MONSTER FOUND")
                 with open(detection_file, 'w') as fp:
                     fp.write("monster")
 
-        else:
-            try:
-                contents = (message.embeds[0].to_dict()["fields"][-1]["value"])
-            except Exception as e:
-                print(e)
-            finally:
-                print(contents)
-            if repair_pattern.search(contents):
-                # REPAIR FOUND
+        elif contents_text:
+            if repair_pattern.search(contents_text):
                 print("REPAIR FOUND")
                 with open(detection_file, 'w') as fp:
                     fp.write("repair")
