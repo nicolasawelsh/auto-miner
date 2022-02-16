@@ -48,7 +48,6 @@ async def on_message(message):
             contents_text = False
         finally:
             print(f"{contents_text=}")
-            print(message.embeds[0].to_dict()["fields"])
 
         print()
 
