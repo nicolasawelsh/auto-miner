@@ -8,7 +8,7 @@ from os.path import exists
 
 # Local libraries
 from mine_config     import control_keys, flags, cmd_text, \
-                            macro_sleep, key_sleep
+                            execution_sleep, alerts
 from discord_bot     import detection_file
 
 
@@ -21,55 +21,76 @@ def on_press(key):
         return False
 
 
-def toggle(pause=False):
-    if pause:
-        flags['running'] = False
-        print_text('paused')
-    else:
+def toggle(toggle=True, pause=False):
+    if toggle:
         flags['running'] = not flags['running']
-        if flags['running']:
-            print_text('started')
-            flags['first_run'] = False
+    else:
+        if pause:
+            flags['running'] = False
         else:
-            print_text('paused')
+            flags['running'] = True
+
+    if flags['running']:
+        print_text('started')
+    else:
+        print_text('paused')
+    flags['first_run'] = False
+
 
 def mine_macro(flags):
     keyboard = Controller()
     while not flags['exit']:
-        if check_exit(mine_time + rand_sleep(macro_sleep, do_sleep=False), flags): return
+        # Macro loop delay
+        if check_exit(mine_time + rand_sleep('macro', do_sleep=False), flags): 
+            return
+
+        # Read possible alert from discord_bot.py
+        detection_contents = False
+        if exists(detection_file):
+            with open(detection_file, 'r') as fp:
+                detection_contents = fp.read()
+        
+        # Alert triggered
+        if detection_contents:
+
+            # Monster appeared
+            if alerts['monster'] in detection_contents:
+                with open(detection_file, 'w') as fp:
+                    fp.truncate(0)
+                toggle(toggle=False, pause=True)
+                print_text('monster')
+                continue
+
+            # Repair needed
+            elif alerts['repair'] in detection_contents:
+                with open(detection_file, 'w') as fp:
+                    fp.truncate(0)
+                press_keys(keyboard, 'm!repair')
+                press_keys(keyboard, [Key.enter])
+                print_text('repair')
+                rand_sleep('macro', do_sleep=True)
+
+            # Monster defeated
+            elif alerts['defeat'] in detection_contents:
+                with open(detection_file, 'w') as fp:
+                    fp.truncate(0)
+                print_text('defeat')
+                toggle(toggle=False, pause=False)
+                rand_sleep('macro', do_sleep=True)
+
+        # Mine macro
         if flags['running']:
-            if exists(detection_file):
-                with open(detection_file, 'r+') as fp:
-                    detection_contents = fp.read()
-                    if 'monster' in detection_contents:
-                        fp.truncate(0)
-                        toggle(pause=True)
-                        print_text('monster')
-                        continue
-                    elif 'repair' in detection_contents:
-                        fp.truncate(0)
-                        press_keys(keyboard, 'm!repair')
-                        press_key(keyboard, Key.enter)
-                        print_text('repair')
-                        continue
             press_keys(keyboard, 'm!m')
-            press_key(keyboard, Key.enter)
+            press_keys(keyboard, [Key.enter])
             print_text('mine')
 
 
-def press_key(keyboard, key):
-    keyboard.press(key)
-    rand_sleep(key_sleep)
-    keyboard.release(key)
-    rand_sleep(key_sleep)
-
-
-def press_keys(keyboard, key_str):
-    for key in key_str:
+def press_keys(keyboard, keys):
+    for key in keys:
         keyboard.press(key)
-        rand_sleep(key_sleep)
+        rand_sleep('key')
         keyboard.release(key)
-        rand_sleep(key_sleep)
+        rand_sleep('key')
 
 
 def check_exit(s, flags):
@@ -80,8 +101,9 @@ def check_exit(s, flags):
     return False
 
 
-def rand_sleep(range_arr, do_sleep=True):
-    sleep_time = uniform(range_arr[0], range_arr[-1])
+def rand_sleep(sleep_key, do_sleep=True):
+    sleep_arr = execution_sleep[sleep_key]
+    sleep_time = uniform(sleep_arr[0], sleep_arr[-1])
     if do_sleep:
         sleep(sleep_time)
     return sleep_time
@@ -95,6 +117,8 @@ def print_text(argument):
         print("Pickaxe repaired!")
     elif argument == 'monster':
         print("Kill the monster!")
+    elif argument == 'defeat':
+        print("Monster defeated!")
     elif argument == 'instructions':
         return float(input(cmd_text['instructions']))
     elif argument == 'tutorial':
@@ -127,11 +151,7 @@ if __name__ == "__main__":
     mine_thread = Thread(target=mine_macro, args=(flags,))
     mine_thread.start()
 
-    #repair_thread = Thread(target=repair_macro, args=(flags,))
-    #repair_thread.start()
-
     with Listener(on_press=on_press) as listener:
         listener.join()
         
     mine_thread.join()
-    #repair_thread.join()
