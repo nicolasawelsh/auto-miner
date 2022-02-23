@@ -4,12 +4,12 @@ from threading       import Thread
 from datetime        import datetime
 from time            import sleep, time
 from random          import uniform
-from os.path import exists
+from os.path         import exists
 
 # Local libraries
-from mine_config     import control_keys, flags, cmd_text, \
-                            execution_sleep, alerts
-from discord_bot     import detection_file
+from mine_config import control_keys, flags, cmd_text, \
+                        execution_sleep, alerts
+from discord_bot import detection_file
 
 
 def on_press(key):

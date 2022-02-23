@@ -1,23 +1,27 @@
 # Imported libraries
-import os
 import discord
 from dotenv import load_dotenv
-import re
+from os     import getenv
+from re     import compile
 
 # Local libraries
 from mine_config import alerts
 
-repair_pattern = re.compile(r'repair')
-teleport_pattern = re.compile(r'\.gif$')
-defeated_pattern = re.compile(r'defeated the enemy')
+
+# Regex patterns to detect events
+repair_pattern = compile(r'repair')
+teleport_pattern = compile(r'\.gif$')
+defeated_pattern = compile(r'defeated the enemy')
 
 detection_file = "detection.txt"
 
+# Load evironment variables from .env
 load_dotenv()
-TOKEN = os.getenv('DISCORD_TOKEN')
-GUILD = os.getenv('DISCORD_GUILD')
+TOKEN = getenv('DISCORD_TOKEN')
+GUILD = getenv('DISCORD_GUILD')
 
 client = discord.Client()
+
 
 @client.event
 async def on_ready():
@@ -31,9 +35,11 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
+    # Read only messages from user: "Mining Simulator"
     if message.author.display_name == "Mining Simulator":
+        # If message contains embedded content
         if hasattr(message, "embeds") and message.embeds:
-            # Extract URL from message
+            # Extract URL from message embeds
             try:
                 # Hard-coded data structure
                 contents_url = message.embeds[0].image.url
@@ -43,7 +49,7 @@ async def on_message(message):
             finally:
                 print(f"{contents_url=}")
 
-            # Extract text from message
+            # Extract text from message embeds
             try:
                 # Hard-coded data structure
                 contents_text = message.embeds[0].to_dict()["fields"][-1]["value"]
@@ -67,8 +73,10 @@ async def on_message(message):
 
             print()
         
+        # If message contains regular text
         elif hasattr(message, "content") and message.content:
             if defeated_pattern.search(message.content):
+                print(f"{message.content=}")
                 print("DEFEAT FOUND")
                 print()
                 with open(detection_file, 'w') as fp:
