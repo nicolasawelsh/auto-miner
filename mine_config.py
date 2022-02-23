@@ -2,18 +2,19 @@ from pynput.keyboard import Key
 
 
 # Time ranges for randomized execution time
-macro_sleep = [0, 0.1]
-key_sleep   = [0.01, 0.02]
+execution_sleep = {
+    'key'           : [0.01, 0.02],
+    'macro'         : [0, 0.1],
+    'command_sleep' : [0.1, 0.2]
+}
 
-
-# Config dictionaries
+# Control keys for script pausing and exiting
 control_keys = {
     'toggle': Key.f9,
     'exit'  : Key.f10
 }
 
-
-# Control dictionaries
+# Control flags
 flags = {
     'running'  : False, 
     'exit'     : False,
@@ -22,6 +23,14 @@ flags = {
     'repair'   : False
 }
 
+# Alerts sent by discord_bot, received by macro
+alerts = {
+    'monster' : 'monster',
+    'defeat'  : 'defeat',
+    'repair'  : 'repair'
+}
+
+# Text used in stdout
 cmd_text = {
     'instructions': "Input delay between mining (in seconds): ",
     'tutorial_1'  : "--- Type {} to  start/stop mining ---".format(control_keys['toggle']),
