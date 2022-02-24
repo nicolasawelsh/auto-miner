@@ -58,6 +58,7 @@ def mine_macro(flags):
                 with open(detection_file, 'w') as fp:
                     fp.truncate(0)
                 toggle(toggle=False, pause=True)
+                press_keys(keyboard, 'm!fight ')
                 print_text('monster')
                 continue
 
@@ -116,7 +117,7 @@ def print_text(argument):
     elif argument == 'repair':
         print("Pickaxe repaired!")
     elif argument == 'monster':
-        print("Kill the monster!")
+        print("Type the code to kill the monster!")
     elif argument == 'defeat':
         print("Monster defeated!")
     elif argument == 'instructions':
