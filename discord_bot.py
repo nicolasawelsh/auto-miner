@@ -1,6 +1,7 @@
 # Imported libraries
 import discord
 from dotenv import load_dotenv
+from json   import dumps
 from os     import getenv
 from re     import compile
 
@@ -52,7 +53,7 @@ async def on_message(message):
             # Extract text from message embeds
             try:
                 # Hard-coded data structure
-                contents_text = message.embeds[0].to_dict()["fields"][-1]["value"]
+                contents_text = dumps(message.embeds[0].to_dict())
                 if not contents_text: contents_text = False
             except Exception as e:
                 contents_text = False
