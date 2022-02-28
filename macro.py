@@ -58,9 +58,20 @@ def mine_macro(flags):
                 with open(detection_file, 'w') as fp:
                     fp.truncate(0)
                 toggle(toggle=False, pause=True)
-                press_keys(keyboard, 'm!fight ')
                 print_text('monster')
-                continue
+
+                while alerts['defeat'] not in detection_contents:
+                    press_keys(keyboard, 'm!fight ')
+                    if exists(detection_file):
+                        with open(detection_file, 'r') as fp:
+                            detection_contents = fp.read()
+
+                # Monster defeated
+                with open(detection_file, 'w') as fp:
+                    fp.truncate(0)
+                print_text('defeat')
+                toggle(toggle=False, pause=False)
+                rand_sleep('macro', do_sleep=True)
 
             # Repair needed
             elif alerts['repair'] in detection_contents:
@@ -69,14 +80,6 @@ def mine_macro(flags):
                 press_keys(keyboard, 'm!repair')
                 press_keys(keyboard, [Key.enter])
                 print_text('repair')
-                rand_sleep('macro', do_sleep=True)
-
-            # Monster defeated
-            elif alerts['defeat'] in detection_contents:
-                with open(detection_file, 'w') as fp:
-                    fp.truncate(0)
-                print_text('defeat')
-                toggle(toggle=False, pause=False)
                 rand_sleep('macro', do_sleep=True)
 
         # Mine macro
