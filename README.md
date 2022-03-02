@@ -15,7 +15,7 @@ Requirements:
   - The following python modules:
     - [discord](https://pypi.org/project/discord.py/)
     - [pynput](https://pypi.org/project/pynput/)
-    - [python dotenv](https://pypi.org/project/python-dotenv/)
+    - [python-dotenv](https://pypi.org/project/python-dotenv/)
 
 Setup:
 - Create a [Discord bot account](https://discordpy.readthedocs.io/en/stable/discord.html) and add it to your mining server
