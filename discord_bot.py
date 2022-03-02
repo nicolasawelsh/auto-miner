@@ -6,7 +6,7 @@ from os     import getenv
 from re     import compile
 
 # Local libraries
-from mine_config import alerts
+from config.config import alerts
 
 
 # Regex patterns to detect events

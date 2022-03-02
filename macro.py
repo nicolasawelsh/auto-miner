@@ -7,9 +7,9 @@ from random          import uniform
 from os.path         import exists
 
 # Local libraries
-from mine_config import control_keys, flags, cmd_text, \
-                        execution_sleep, alerts
-from discord_bot import detection_file
+from config.config   import control_keys, flags, cmd_text, \
+                            execution_sleep, alerts
+from discord_bot     import detection_file
 
 
 def on_press(key):
