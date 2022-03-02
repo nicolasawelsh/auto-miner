@@ -115,22 +115,35 @@ def clear_file(filename):
 def read_file(filename):
     if exists(filename):
         with open(detection_file, 'r') as fp:
-            detection_contents = fp.read()
+            contents = fp.read()
     else:
         return False
-    return detection_contents
+    return contents
 
 
 def print_text(argument):
     if argument == 'mine':
-        print("\u26cf", end="  ")
-        print(datetime.now().time())
-    elif argument == 'repair':
-        print("Pickaxe repaired!")
-    elif argument == 'monster':
-        print("Type the code to kill the monster!")
+        print("\u26cf" + "  " + str(datetime.now().time()))
+
     elif argument == 'defeat':
         print("Monster defeated!")
+    elif argument == 'monster':
+        print("Type the code to kill the monster!")
+    elif argument == 'repair':
+        print("Pickaxe repaired!")  
+    
+    elif argument == 'started':
+        if flags['first_run']:
+            print(cmd_text['breaker'])
+            print(cmd_text['warning'])
+            print(cmd_text['breaker'])
+            print()
+        print(cmd_text['started'])
+    elif argument == 'paused':
+        print(cmd_text['paused'])
+    elif argument == 'terminated':
+        print(cmd_text['terminated'])
+    
     elif argument == 'instructions':
         return float(input(cmd_text['instructions']))
     elif argument == 'tutorial':
@@ -143,17 +156,6 @@ def print_text(argument):
         print(cmd_text['warning'])
         print(cmd_text['breaker'])
         print()
-    elif argument == 'started':
-        if flags['first_run']:
-            print(cmd_text['breaker'])
-            print(cmd_text['warning'])
-            print(cmd_text['breaker'])
-            print()
-        print(cmd_text['started'])
-    elif argument == 'paused':
-        print(cmd_text['paused'])
-    elif argument == 'terminated':
-        print(cmd_text['terminated'])
 
 
 if __name__ == "__main__":
