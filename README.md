@@ -9,6 +9,14 @@ Features:
 - Auto pickaxe repair
 - Auto pause and resume on monster
 
+Requirements:
+- In the current version, you will need a Discord bot account
+- Python 3.8
+  - The following python modules:
+    - [discord](https://pypi.org/project/discord.py/)
+    - [pynput](https://pypi.org/project/pynput/)
+    - [python dotenv](https://pypi.org/project/python-dotenv/)
+
 Setup:
 - Create a [Discord bot account](https://discordpy.readthedocs.io/en/stable/discord.html) and add it to your mining server
 - Copy your bot's token
