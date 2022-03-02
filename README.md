@@ -3,6 +3,8 @@
 
 This is a full-package python app to automatically mine on the Discord Mining Simulator.
 
+---
+
 **Features:**
 - Mine delay selection
 - Pause/Stop macro
