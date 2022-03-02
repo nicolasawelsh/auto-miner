@@ -22,8 +22,8 @@ This is a full-package python app to automatically mine on the Discord Mining Si
 **Setup:**
 - Create a [Discord bot account](https://discordpy.readthedocs.io/en/stable/discord.html) and add it to your mining server
 - Copy your bot's token
-![bot_token](https://github.com/nicolasawelsh/auto-miner/blob/testing/readme/bot_token.png)
+![bot_token](https://github.com/nicolasawelsh/auto-miner/blob/main/readme/bot_token.png)
 - Create a .env file with your bot's token and discord server name in the same directory as this repo
-![env](https://github.com/nicolasawelsh/auto-miner/blob/testing/readme/env.png)
+![env](https://github.com/nicolasawelsh/auto-miner/blob/main/readme/env.png)
 - Start the discord bot: `python3 discord_bot.py`
 - Start the macro: `python3 macro.py`
