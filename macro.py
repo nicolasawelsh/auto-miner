@@ -45,38 +45,31 @@ def mine_macro(flags):
             return
 
         # Read possible alert from discord_bot.py
-        detection_contents = False
-        if exists(detection_file):
-            with open(detection_file, 'r') as fp:
-                detection_contents = fp.read()
+        detection_contents = read_file(detection_file)
         
         # Alert triggered
         if detection_contents:
 
             # Monster appeared
             if alerts['monster'] in detection_contents:
-                with open(detection_file, 'w') as fp:
-                    fp.truncate(0)
+                clear_file(detection_file)
                 toggle(toggle=False, pause=True)
                 print_text('monster')
                 press_keys(keyboard, 'm!fight ')
                 
+                # Wait for monster defeat
                 while alerts['defeat'] not in detection_contents:
-                    if exists(detection_file):
-                        with open(detection_file, 'r') as fp:
-                            detection_contents = fp.read()
+                    detection_contents = read_file(detection_file)
 
                 # Monster defeated
-                with open(detection_file, 'w') as fp:
-                    fp.truncate(0)
+                clear_file(detection_file)
                 print_text('defeat')
                 toggle(toggle=False, pause=False)
                 rand_sleep('macro', do_sleep=True)
 
             # Repair needed
             elif alerts['repair'] in detection_contents:
-                with open(detection_file, 'w') as fp:
-                    fp.truncate(0)
+                clear_file(detection_file)
                 press_keys(keyboard, 'm!repair')
                 press_keys(keyboard, [Key.enter])
                 print_text('repair')
@@ -111,6 +104,21 @@ def rand_sleep(sleep_key, do_sleep=True):
     if do_sleep:
         sleep(sleep_time)
     return sleep_time
+
+
+def clear_file(filename):
+    if exists(filename):
+        with open(filename, 'w') as fp:
+            fp.truncate(0)
+
+
+def read_file(filename):
+    if exists(filename):
+        with open(detection_file, 'r') as fp:
+            detection_contents = fp.read()
+    else:
+        return False
+    return detection_contents
 
 
 def print_text(argument):
