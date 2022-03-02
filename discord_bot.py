@@ -11,7 +11,7 @@ from config.config import alerts
 
 # Regex patterns to detect events
 repair_pattern = compile(r'repair')
-teleport_pattern = compile(r'\.gif$')
+monster_pattern = compile(r'\.(png|jpg|jpeg)$')
 defeated_pattern = compile(r'defeated the enemy')
 
 detection_file = "detection.txt"
@@ -61,7 +61,7 @@ async def on_message(message):
                 print(f"{contents_text=}")
 
             if contents_url:
-                if not teleport_pattern.search(contents_url):
+                if monster_pattern.search(contents_url):
                     print("MONSTER FOUND")
                     with open(detection_file, 'w') as fp:
                         fp.write(alerts['monster'])
