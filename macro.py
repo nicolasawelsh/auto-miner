@@ -59,9 +59,9 @@ def mine_macro(flags):
                     fp.truncate(0)
                 toggle(toggle=False, pause=True)
                 print_text('monster')
-
+                press_keys(keyboard, 'm!fight ')
+                
                 while alerts['defeat'] not in detection_contents:
-                    press_keys(keyboard, 'm!fight ')
                     if exists(detection_file):
                         with open(detection_file, 'r') as fp:
                             detection_contents = fp.read()
