@@ -3,13 +3,13 @@
 
 This is a full-package python app to automatically mine on the Discord Mining Simulator.
 
-Features:
+**Features:**
 - Mine delay selection
 - Pause/Stop macro
 - Auto pickaxe repair
 - Auto pause and resume on monster
 
-Requirements:
+**Requirements:**
 - In the current version, you will need a Discord bot account
 - Python 3.8
   - The following python modules:
@@ -17,7 +17,7 @@ Requirements:
     - [pynput](https://pypi.org/project/pynput/)
     - [python-dotenv](https://pypi.org/project/python-dotenv/)
 
-Setup:
+**Setup:**
 - Create a [Discord bot account](https://discordpy.readthedocs.io/en/stable/discord.html) and add it to your mining server
 - Copy your bot's token
 ![bot_token](https://github.com/nicolasawelsh/auto-miner/blob/testing/readme/bot_token.png)
