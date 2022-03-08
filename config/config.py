@@ -4,8 +4,8 @@ from pynput.keyboard import Key
 # Time ranges for randomized execution time
 execution_sleep = {
     'key'           : [0.01, 0.02],
-    'macro'         : [0, 0.1],
-    'command_sleep' : [0.1, 0.2]
+    'macro'         : [0.01, 0.1],
+    'command_sleep' : [0.01, 0.1]
 }
 
 # Control keys for script pausing and exiting
