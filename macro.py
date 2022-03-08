@@ -40,9 +40,9 @@ def toggle(toggle=True, pause=False):
 def mine_macro(flags):
     keyboard = Controller()
     while not flags['exit']:
-        # Macro loop delay
-        if check_exit(mine_time + rand_sleep('macro', do_sleep=False), flags): 
-            return
+        
+        overhead_start_time = time()
+        sleep(mine_time / 2)  # Wait some time to detect messages
 
         # Read possible alert from discord_bot.py
         detection_contents = read_file(detection_file)
@@ -75,6 +75,13 @@ def mine_macro(flags):
                 print_text('repair')
                 rand_sleep('macro', do_sleep=True)
 
+        overhead_time = time() - overhead_start_time
+        
+        # Macro loop delay
+        delay = mine_time + rand_sleep('macro', do_sleep=False) - overhead_time
+        if check_exit(delay, flags): 
+            return
+        
         # Mine macro
         if flags['running']:
             press_keys(keyboard, 'm!m')
@@ -92,6 +99,8 @@ def press_keys(keyboard, keys):
 
 def check_exit(s, flags):
     start = time()
+    if s < 0:
+        s = rand_sleep('macro', do_sleep=False)
     while time() < (start + s):
         if flags['exit']:
             return True
@@ -101,6 +110,7 @@ def check_exit(s, flags):
 def rand_sleep(sleep_key, do_sleep=True):
     sleep_arr = execution_sleep[sleep_key]
     sleep_time = uniform(sleep_arr[0], sleep_arr[-1])
+    #sleep_time = 0
     if do_sleep:
         sleep(sleep_time)
     return sleep_time
@@ -123,14 +133,21 @@ def read_file(filename):
 
 def print_text(argument):
     if argument == 'mine':
-        print("\u26cf" + "  " + str(datetime.now().time()))
-
+        global previous_time
+        current_time = datetime.now()
+        if not previous_time:
+            previous_time = current_time
+        diff_time = current_time - previous_time
+        print("\u26cf" + "  " + str(current_time.time()) + 
+              " : {}.{} seconds since last mine".format(diff_time.seconds, diff_time.microseconds))
+        previous_time = current_time
+        
     elif argument == 'defeat':
         print("Monster defeated!")
     elif argument == 'monster':
         print("Type the code to kill the monster!")
     elif argument == 'repair':
-        print("Pickaxe repaired!")  
+        print("Pickaxe repaired!")
     
     elif argument == 'started':
         if flags['first_run']:
@@ -159,6 +176,8 @@ def print_text(argument):
 
 
 if __name__ == "__main__":
+    previous_time = False
+
     mine_time = print_text('instructions')
     print_text('tutorial')
 
