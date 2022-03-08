@@ -41,8 +41,10 @@ def mine_macro(flags):
     keyboard = Controller()
     while not flags['exit']:
         
+        # Catch script time that can be subtracted from delay
         overhead_start_time = time()
-        sleep(mine_time / 2)  # Wait some time to detect messages
+        # Wait some time to detect messages
+        sleep(1)
 
         # Read possible alert from discord_bot.py
         detection_contents = read_file(detection_file)
