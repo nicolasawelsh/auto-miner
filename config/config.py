@@ -25,9 +25,8 @@ flags = {
 
 # Alerts sent by discord_bot, received by macro
 alerts = {
-    'monster' : 'monster',
-    'defeat'  : 'defeat',
-    'repair'  : 'repair'
+    'repair_needed'    : False,
+    'monster_appeared' : False
 }
 
 # Text used in stdout
