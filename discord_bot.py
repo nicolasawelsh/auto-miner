@@ -1,22 +1,15 @@
 # Imported libraries
 import discord
-from dotenv import load_dotenv
-from json   import dumps
-from os     import getenv
-from re     import compile
+import pickle
+from   dotenv import load_dotenv
+from   os     import getenv
 
 # Local libraries
-from config.config import alerts
+from config.structs   import Message_Dissection
+from config.pickle_db import read_db, write_db
 
 
-# Regex patterns to detect events
-repair_pattern = compile(r'repair')
-monster_pattern = compile(r'\.(png|jpg|jpeg)$')
-defeated_pattern = compile(r'defeated the enemy')
-
-detection_file = "detection.txt"
-
-# Load evironment variables from .env
+# Load evironment variables frodbfilem .env
 load_dotenv()
 TOKEN = getenv('DISCORD_TOKEN')
 GUILD = getenv('DISCORD_GUILD')
@@ -36,53 +29,30 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
-    # Read only messages from user: "Mining Simulator"
-    if message.author.display_name == "Mining Simulator":
-        # If message contains embedded content
-        if hasattr(message, "embeds") and message.embeds:
-            # Extract URL from message embeds
-            try:
-                # Hard-coded data structure
-                contents_url = message.embeds[0].image.url
-                if not contents_url: contents_url = False
-            except Exception as e:
-                contents_url = False
-            finally:
-                print(f"{contents_url=}")
+    message_dissected = Message_Dissection(message)
+    print(message_dissected.__dict__)
+    print()
 
-            # Extract text from message embeds
-            try:
-                # Hard-coded data structure
-                contents_text = dumps(message.embeds[0].to_dict())
-                if not contents_text: contents_text = False
-            except Exception as e:
-                contents_text = False
-            finally:
-                print(f"{contents_text=}")
-
-            if contents_url:
-                if monster_pattern.search(contents_url):
-                    print("MONSTER FOUND")
-                    with open(detection_file, 'w') as fp:
-                        fp.write(alerts['monster'])
-
-            elif contents_text:
-                if repair_pattern.search(contents_text):
-                    print("REPAIR FOUND")
-                    with open(detection_file, 'w') as fp:
-                        fp.write(alerts['repair'])
-
-            print()
-        
-        # If message contains regular text
-        elif hasattr(message, "content") and message.content:
-            if defeated_pattern.search(message.content):
-                print(f"{message.content=}")
-                print("DEFEAT FOUND")
-                print()
-                with open(detection_file, 'w') as fp:
-                    fp.write(alerts['defeat'])
+    if message_dissected.is_bot():
+        db = read_db()
+        if message_dissected.repair_needed():
+            print("REPAIR NEEDED")
+            db['repair_needed']  = True
+        elif message_dissected.repair_success():
+            print("REPAIR SUCCESS")
+            db['repair_needed']  = False
+        elif message_dissected.monster_appeared():
+            print("MONSTER APPEARED")
+            db['monster_appeared'] = True
+        elif message_dissected.monster_defeated():
+            print("MONSTER DEFEATED")
+            db['monster_appeared'] = False
+        write_db(db)
 
 
 if __name__ == "__main__":
-    client.run(TOKEN)
+    try:
+        client.run(TOKEN)
+    except Exception as e:
+        print('Failed to connect bot to server!')
+        print(e)
