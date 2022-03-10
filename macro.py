@@ -4,13 +4,12 @@ from threading       import Thread
 from datetime        import datetime
 from time            import sleep, time
 from random          import uniform
-from os.path         import exists
-import pickle
 
 # Local libraries
-from config.config   import control_keys, flags, cmd_text, \
-                            execution_sleep
+from config.config    import control_keys, flags, cmd_text, \
+                             execution_sleep
 from config.pickle_db import read_db, build_db
+
 
 def on_press(key):
     if key == control_keys['toggle']:
@@ -48,7 +47,7 @@ def mine_macro(flags):
             build_db()
             db = read_db()
 
-        # Check db for monster or repair
+        # Check for monster, wait for defeat
         if db['monster_appeared']:
             toggle(toggle=False, pause=True)
             print_text('monster')
@@ -59,6 +58,7 @@ def mine_macro(flags):
             toggle(toggle=False, pause=False)
             print_text('defeat')
             rand_sleep('macro', do_sleep=True)
+        # Check for repair, wait for success
         elif db['repair_needed']:
             press_keys(keyboard, 'm!repair')
             press_keys(keyboard, [Key.enter])
