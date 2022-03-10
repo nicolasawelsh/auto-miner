@@ -31,7 +31,6 @@ async def on_ready():
 async def on_message(message):
     message_dissected = Message_Dissection(message)
     print(message_dissected.__dict__)
-    print()
 
     if message_dissected.is_bot():
         db = read_db()
@@ -48,6 +47,7 @@ async def on_message(message):
             print("MONSTER DEFEATED")
             db['monster_appeared'] = False
         write_db(db)
+        print()
 
 
 if __name__ == "__main__":
