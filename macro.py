@@ -48,11 +48,13 @@ def mine_macro(flags):
             build_db()
             db = read_db()
 
+        # Check db for monster or repair
         if db['monster_appeared']:
             toggle(toggle=False, pause=True)
             print_text('monster')
             press_keys(keyboard, 'm!fight ')
             while db['monster_appeared']:
+                sleep(0.1)
                 db = read_db()
             toggle(toggle=False, pause=False)
             print_text('defeat')
@@ -62,8 +64,10 @@ def mine_macro(flags):
             press_keys(keyboard, [Key.enter])
             print_text('repair')
             rand_sleep('macro', do_sleep=True)
+            while db['repair_needed']:
+                sleep(0.1)
+                db = read_db()
 
-        sleep(0.5)  # Wait for messages
         overhead_time = time() - overhead_start_time
         
         # Macro loop delay
