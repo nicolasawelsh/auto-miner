@@ -1,4 +1,5 @@
 from pynput.keyboard import Key
+from re              import compile
 
 
 # Time ranges for randomized execution time
@@ -17,15 +18,26 @@ control_keys = {
 flags = {
     'running'  : False, 
     'exit'     : False,
-    'first_run': True,
-    'monster'  : False,
-    'repair'   : False
+    'first_run': True
 }
 
 # Alerts sent by discord_bot, received by macro
 alerts = {
     'repair_needed'    : False,
     'monster_appeared' : False
+}
+
+# Regex patterns for message searches
+regex_patterns = {
+    # Bot messages
+    'repair_needed'    : compile(r'pickaxe broke'),
+    'repair_success'   : compile(r'successfully repaired'),
+    'monster_appeared' : compile(r'being attacked'),
+    'monster_defeated' : compile(r'defeated the enemy'),
+    # User messages
+    'request_mine'     : compile(r'm!m'),
+    'request_repair'   : compile(r'm!repair'),
+    'request_fight'    : compile(r'm!fight')
 }
 
 # Text used in stdout
