@@ -16,8 +16,8 @@ This is a full-package python app to automatically mine on the Discord Mining Si
 - Python 3.9
   - The following python modules:
     - [discord](https://pypi.org/project/discord.py/)
+    - [dotenv](https://pypi.org/project/python-dotenv/)
     - [pynput](https://pypi.org/project/pynput/)
-    - [python-dotenv](https://pypi.org/project/python-dotenv/)
 
 **Setup:**
 - Clone this repository: `git clone https://github.com/nicolasawelsh/auto-miner.git`
