@@ -1,12 +1,8 @@
+# Imported libraries
 import pickle
 
-
-dbfile = 'dbfile'
-
-alerts = {
-    'repair_needed'    : False,
-    'monster_appeared' : False
-}
+# Local libraries
+from config.dicts import alerts, dbfile
 
 
 def write_db(db=alerts):
@@ -26,4 +22,3 @@ def read_db():
 
 if __name__ == "__main__":
     build_db()
-    

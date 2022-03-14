@@ -2,6 +2,9 @@ from pynput.keyboard import Key
 from re              import compile
 
 
+# File to store database
+dbfile = 'dbfile'
+
 # Time ranges for randomized execution time
 execution_sleep = {
     'key'           : [0.01, 0.02],
@@ -21,7 +24,7 @@ flags = {
     'first_run': True
 }
 
-# Alerts sent by discord_bot, received by macro
+# Alerts used by database
 alerts = {
     'repair_needed'    : False,
     'monster_appeared' : False
