@@ -13,9 +13,10 @@ This is a full-package python app to automatically mine on the Discord Mining Si
 
 **Requirements:**
 - In the current version, you will need a Discord bot account
-- Python 3.8
+- Python 3.9
   - The following python modules:
     - [discord](https://pypi.org/project/discord.py/)
+    - [pickle]()
     - [pynput](https://pypi.org/project/pynput/)
     - [python-dotenv](https://pypi.org/project/python-dotenv/)
 
