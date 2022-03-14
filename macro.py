@@ -7,7 +7,7 @@ from random          import uniform
 
 # Local libraries
 from config.pickle_db import read_db, build_db
-from config.config    import control_keys, flags, cmd_text, \
+from config.dicts    import control_keys, flags, cmd_text, \
                              execution_sleep
 
 

@@ -1,15 +1,14 @@
 # Imported libraries
 import discord
-
 from   dotenv import load_dotenv
 from   os     import getenv
 
 # Local libraries
-from config.structs   import Message_Dissection
+from config.message   import Message_Dissection
 from config.pickle_db import read_db, write_db
 
 
-# Load evironment variables frodbfilem .env
+# Load evironment variables from .env
 load_dotenv()
 TOKEN = getenv('DISCORD_TOKEN')
 GUILD = getenv('DISCORD_GUILD')
