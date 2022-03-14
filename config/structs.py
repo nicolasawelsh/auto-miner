@@ -1,36 +1,76 @@
 from json import dumps
-
-
-mine_sim = "Mining Simulator"
-
-pattern_mine             = compile(r'During the session you found')
-pattern_repair_needed    = compile(r'pickaxe broke')
-pattern_repair_success   = compile(r'successfully repaired')
-pattern_monster_appeared = compile(r'being attacked')
-pattern_monster_defeated = compile(r'defeated the enemy')
+from re   import compile
 
 
 class Message_Dissection:
-  def __init__(self, message):
-    self.is_mine_sim      = False
-    self.mine             = False
-    self.repair_needed    = False
-    self.repair_success   = False
-    self.monster_appeared = False
-    self.monster_defeated = False
+    def __init__(self, message):
+        try:
+            self.user = message.author.display_name
+        except Exception as e:
+            self.user = ""
 
-    if message.author.display_name == mine_sim:
-        self.is_mine_sim = True
-
-        if hasattr(message, "embeds") and message.embeds:
+        if self.is_bot():
             try:
-                contents_text = dumps(message.embeds[0].to_dict())
-                if not contents_text: contents_text = False
+                self.contents = dumps(message.embeds[0].to_dict())
             except Exception as e:
-                print("Message is empty")
+                try:
+                    self.contents = message.content
+                except Exception as e:
+                    self.contents = ''
+        else:
+            try:
+                self.contents = message.content
+            except Exception as e:
+                self.contents = ''
 
-            if   pattern_mine            .search(contents_text): self.mine             = True
-            if   pattern_repair_needed   .search(contents_text): self.repair_needed    = True
-            elif pattern_repair_success  .search(contents_text): self.repair_success   = True
-            if   pattern_monster_appeared.search(contents_text): self.monster_appeared = True
-            elif pattern_monster_defeated.search(contents_text): self.monster_defeated = True
+    # Bot messages
+    def is_bot(self):
+        if self.user == "Mining Simulator":
+            return True
+        return False
+
+    def repair_needed(self):
+        if self.is_bot():
+            if compile(r'pickaxe broke').search(self.contents):
+                return True
+        return False
+
+    def repair_success(self):
+        if self.is_bot():
+            if compile(r'successfully repaired').search(self.contents):
+                return True
+        return False
+
+    def monster_appeared(self):
+        if self.is_bot():
+            if compile(r'being attacked').search(self.contents):
+                return True
+        return False
+
+    def monster_defeated(self):
+        if self.is_bot():
+            if compile(r'defeated the enemy').search(self.contents):
+                return True
+        return False
+    
+    # User messages
+    def is_user(self):
+        return not self.is_bot()
+
+    def request_mine(self):
+        if self.is_user():
+            if compile(r'm!m').search(self.contents):
+                return True
+        return False
+
+    def request_repair(self):
+        if self.is_user():
+            if compile(r'm!repair').search(self.contents):
+                return True
+        return False
+
+    def request_fight(self):
+        if self.is_user():
+            if compile(r'm!fight').search(self.contents):
+                return True
+        return False

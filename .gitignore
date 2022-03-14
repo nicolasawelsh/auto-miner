@@ -1,5 +1,5 @@
 __pycache__/
-detection.txt
 .env
 .idea
 .git
+dbfile
