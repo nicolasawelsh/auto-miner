@@ -1,6 +1,5 @@
 # Imported libraries
 from json import dumps
-from re   import compile
 
 # Local libraries
 from config.dicts import regex_patterns
