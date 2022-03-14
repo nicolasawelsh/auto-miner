@@ -39,38 +39,47 @@ def toggle(toggle=True, pause=False):
 def mine_macro(flags):
     keyboard = Controller()
     while not flags['exit']:
+        # Start timer to subtract monster/repair time from delay
         overhead_start_time = time()
 
-        sleep(2)  # Wait for messages
-        try:        # Read for db changes
+        # Wait for messages
+        sleep(2)
+        # Read for db changes
+        try:
             db = read_db()
         except Exception as e:
             build_db()
             db = read_db()
         
-        # Check for monster, wait for defeat
+        # Check for monster
         if db['monster_appeared']:
             toggle(toggle=False, pause=True)
             print_text('monster')
             press_keys(keyboard, 'm!fight ')
+            
+            # Wait for defeat
             while db['monster_appeared']:
                 sleep(0.1)  # Wait for response
                 db = read_db()
             print_text('defeat')
             toggle(toggle=False, pause=False)
-        # Check for repair, wait for success
+
+        # Check for repair
         elif db['repair_needed']:
             toggle(toggle=False, pause=False)
             print_text('repair')
             press_keys(keyboard, 'm!repair')
             press_keys(keyboard, [Key.enter])
             rand_sleep('macro', do_sleep=True)
+            
+            # Wait for repair
             while db['repair_needed']:
                 sleep(0.1)
                 db = read_db()
             print_text('repaired')
             toggle(toggle=False, pause=False)
 
+        # End timer
         overhead_time = time() - overhead_start_time
         
         # Macro loop delay
