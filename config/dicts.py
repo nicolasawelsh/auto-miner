@@ -33,7 +33,7 @@ alerts = {
 # Regex patterns for message searches
 regex_patterns = {
     # Bot messages
-    'repair_needed'    : compile(r'pickaxe broke'),
+    'repair_needed'    : compile(r'broke'),
     'repair_success'   : compile(r'successfully repaired'),
     'monster_appeared' : compile(r'being attacked'),
     'monster_defeated' : compile(r'defeated the enemy'),
