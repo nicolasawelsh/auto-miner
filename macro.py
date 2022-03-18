@@ -7,7 +7,7 @@ from random          import uniform
 
 # Local libraries
 from config.pickle_db import read_db, build_db
-from config.dicts    import control_keys, flags, cmd_text, \
+from config.dicts     import control_keys, flags, cmd_text, \
                              execution_sleep
 
 
@@ -20,8 +20,8 @@ def on_press(key):
         return False
 
 
-def toggle(toggle=True, pause=False):
-    if toggle:
+def toggle(toggle_pause=True, pause=False):
+    if toggle_pause:
         flags['running'] = not flags['running']
     else:
         if pause:
@@ -37,7 +37,7 @@ def toggle(toggle=True, pause=False):
 
 
 # Threaded as "mine_thread"
-def mine_macro(flags):
+def mine_macro():
     keyboard = Controller()
     while not flags['exit']:
         # Mine macro
@@ -48,7 +48,7 @@ def mine_macro(flags):
 
         # Macro loop delay
         delay = mine_time + rand_sleep('macro', do_sleep=False)
-        if check_exit(delay, flags): 
+        if check_exit(delay): 
             return
 
 
@@ -57,15 +57,11 @@ def alert_detection():
     keyboard = Controller()
     while not flags['exit']:
         # Read for db changes
-        try:
-            db = read_db()
-        except Exception as e:
-            build_db()
-            db = read_db()
+        db = read_db()
         
         # Check for monster
         if db['monster_appeared']:
-            toggle(toggle=False, pause=True)
+            toggle(toggle_pause=False, pause=True)
             print_text('monster')
             press_keys(keyboard, 'm!fight ')
             
@@ -74,11 +70,11 @@ def alert_detection():
                 sleep(0.1)  # Wait for response
                 db = read_db()
             print_text('defeat')
-            toggle(toggle=False, pause=False)
+            toggle(toggle_pause=False, pause=False)
 
         # Check for repair
         elif db['repair_needed']:
-            toggle(toggle=False, pause=True)
+            toggle(toggle_pause=False, pause=False)
             print_text('repair')
             # Wait for repair
             while db['repair_needed']:
@@ -87,9 +83,9 @@ def alert_detection():
                 sleep(1)  # Reasonable time for bot to detect repair
                 db = read_db()
             print_text('repaired')
-            toggle(toggle=False, pause=False)
+            toggle(toggle_pause=False, pause=False)
 
-
+            
 def press_keys(keyboard, keys):
     for key in keys:
         keyboard.press(key)
@@ -98,10 +94,7 @@ def press_keys(keyboard, keys):
         rand_sleep('key')
 
 
-def check_exit(s, flags):
-    if not flags['running']:
-        return False
-        
+def check_exit(s):
     start = time()
     if s < 0:
         s = rand_sleep('macro', do_sleep=False)
@@ -172,7 +165,7 @@ if __name__ == "__main__":
     mine_time = print_text('instructions')
     print_text('tutorial')
 
-    mine_thread      = Thread(target=mine_macro, args=(flags,))
+    mine_thread      = Thread(target=mine_macro)
     detection_thread = Thread(target=alert_detection)
 
     mine_thread.start()
@@ -183,3 +176,4 @@ if __name__ == "__main__":
     
     mine_thread.join()
     detection_thread.join()
+    
