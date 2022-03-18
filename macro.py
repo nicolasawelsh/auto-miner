@@ -36,14 +36,26 @@ def toggle(toggle_pause=True, pause=False):
     flags['first_run'] = False
 
 
+# Threaded as "mine_thread"
 def mine_macro():
     keyboard = Controller()
     while not flags['exit']:
-        # Start timer to subtract monster/repair time from delay
-        overhead_start_time = time()
+        # Mine macro
+        if flags['running']:
+            press_keys(keyboard, 'm!m')
+            press_keys(keyboard, [Key.enter])
+            print_text('mine')
 
-        # Wait for messages
-        sleep(2)
+        # Macro loop delay
+        delay = mine_time + rand_sleep('macro', do_sleep=False)
+        if check_exit(delay): 
+            return
+
+
+# Threaded as "detection_thread"
+def alert_detection():
+    keyboard = Controller()
+    while not flags['exit']:
         # Read for db changes
         db = read_db()
         
@@ -64,32 +76,16 @@ def mine_macro():
         elif db['repair_needed']:
             toggle(toggle_pause=False, pause=False)
             print_text('repair')
-            press_keys(keyboard, 'm!repair')
-            press_keys(keyboard, [Key.enter])
-            rand_sleep('macro', do_sleep=True)
-            
             # Wait for repair
             while db['repair_needed']:
-                sleep(0.1)
+                press_keys(keyboard, 'm!repair')
+                press_keys(keyboard, [Key.enter])
+                sleep(1)  # Reasonable time for bot to detect repair
                 db = read_db()
             print_text('repaired')
             toggle(toggle_pause=False, pause=False)
 
-        # End timer
-        overhead_time = time() - overhead_start_time
-        
-        # Macro loop delay
-        delay = mine_time + rand_sleep('macro', do_sleep=False) - overhead_time
-        if check_exit(delay):
-            return
-        
-        # Mine macro
-        if flags['running']:
-            press_keys(keyboard, 'm!m')
-            press_keys(keyboard, [Key.enter])
-            print_text('mine')
-
-
+            
 def press_keys(keyboard, keys):
     for key in keys:
         keyboard.press(key)
@@ -169,10 +165,15 @@ if __name__ == "__main__":
     mine_time = print_text('instructions')
     print_text('tutorial')
 
-    mine_thread = Thread(target=mine_macro)
+    mine_thread      = Thread(target=mine_macro)
+    detection_thread = Thread(target=alert_detection)
+
     mine_thread.start()
+    detection_thread.start()
 
     with Listener(on_press=on_press) as listener:
         listener.join()
-        
+    
     mine_thread.join()
+    detection_thread.join()
+    
