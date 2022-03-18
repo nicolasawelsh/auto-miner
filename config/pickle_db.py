@@ -15,8 +15,12 @@ def build_db():
 
 
 def read_db():
-    with open(dbfile, 'rb') as handle:
-        db = pickle.load(handle)
+    try:
+        with open(dbfile, 'rb') as handle:
+            db = pickle.load(handle)
+    except FileNotFoundError:
+        build_db()
+        db = read_db()
     return db
 
 
