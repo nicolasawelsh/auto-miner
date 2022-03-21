@@ -1,5 +1,6 @@
 # Imported libraries
 import pickle
+import os
 
 # Local libraries
 from config.dicts import alerts, dbfile
@@ -18,7 +19,8 @@ def read_db():
     try:
         with open(dbfile, 'rb') as handle:
             db = pickle.load(handle)
-    except FileNotFoundError:
+    except Exception as e:
+        print(e)
         build_db()
         db = read_db()
     return db

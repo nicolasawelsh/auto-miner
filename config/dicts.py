@@ -35,7 +35,7 @@ regex_patterns = {
     # Bot messages
     'repair_needed'    : compile(r'broke'),
     'repair_success'   : compile(r'successfully repaired'),
-    'monster_appeared' : compile(r'being attacked'),
+    'monster_appeared' : compile(r'being attacked|got problems'),
     'monster_defeated' : compile(r'defeated the enemy'),
     # User messages
     'request_mine'     : compile(r'm!m'),

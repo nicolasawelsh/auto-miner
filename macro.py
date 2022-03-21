@@ -67,6 +67,8 @@ def alert_detection():
             
             # Wait for defeat
             while db['monster_appeared']:
+                if flags['exit']:
+                    return
                 sleep(0.1)  # Wait for response
                 db = read_db()
             print_text('defeat')
@@ -78,6 +80,8 @@ def alert_detection():
             print_text('repair')
             # Wait for repair
             while db['repair_needed']:
+                if flags['exit']:
+                    return
                 press_keys(keyboard, 'm!repair')
                 press_keys(keyboard, [Key.enter])
                 sleep(1)  # Reasonable time for bot to detect repair
